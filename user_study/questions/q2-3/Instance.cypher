@@ -1,0 +1,115 @@
+// === Nodes (30) ===
+// Artists (8)
+CREATE (a1:Artist {name:"Ava Sterling", alias:"AVS"})
+CREATE (a2:Artist {name:"Noah Wilder"})
+CREATE (a3:Artist {name:"Liam Hart", alias:"L.Hart"})
+CREATE (a4:Artist {name:"Mia Collins"})
+CREATE (a5:Artist {name:"Ethan Brooks"})
+CREATE (a6:Artist {name:"Zoe Monroe", alias:"Z.M."})
+CREATE (a7:Artist {name:"Caleb Rivers"})
+CREATE (a8:Artist {name:"Luna Hayes"})
+
+// Albums (4)
+CREATE (al1:Album {name:"Neon Echoes", releasedYear:2019})
+CREATE (al2:Album {name:"Paper Skies", releasedYear:2020})
+CREATE (al3:Album {name:"Midnight Parallels", releasedYear:2021})
+CREATE (al4:Album {name:"Quiet Voltage", releasedYear:2022})
+
+// Tracks (16)
+CREATE (t1:Track {name:"City Lights", duration:"03:28"})
+CREATE (t2:Track {name:"Electric Summer", duration:"03:55"})
+CREATE (t3:Track {name:"Hollow Moon", duration:"04:12"})
+CREATE (t4:Track {name:"Riverstone", duration:"04:06"})
+CREATE (t5:Track {name:"Fever Dream", duration:"03:47"})
+CREATE (t6:Track {name:"Echo Park", duration:"03:33"})
+CREATE (t7:Track {name:"Silver Linings", duration:"04:01"})
+CREATE (t8:Track {name:"Running Red", duration:"03:50"})
+CREATE (t9:Track {name:"Gravity Well", duration:"04:24"})
+CREATE (t10:Track {name:"Static Roses", duration:"03:42"})
+CREATE (t11:Track {name:"Golden Hour", duration:"03:38"})
+CREATE (t12:Track {name:"Blacktop Hearts", duration:"04:18"})
+CREATE (t13:Track {name:"Velvet Storm", duration:"03:59"})
+CREATE (t14:Track {name:"Ocean Drive", duration:"04:03"})
+CREATE (t15:Track {name:"Falling Ashes", duration:"04:11"})
+CREATE (t16:Track {name:"Neon Skyline", duration:"03:31"})
+
+// Playlists (2)
+CREATE (p1:Playlist {name:"Fresh Finds Mix",   modifiedAt:"2025-08-10", numFollowers:1243})
+CREATE (p2:Playlist {name:"Roadtrip Fuel",     modifiedAt:"2025-07-29", numFollowers: 982})
+
+// === Labels for multi-genre (Pop / Rock) ===
+SET t1:Pop
+SET t2:Pop
+SET t3:Rock
+SET t4:Rock
+SET t5:Pop
+SET t6:Pop
+SET t7:Pop
+SET t8:Rock
+SET t9:Rock
+SET t10:Pop
+SET t11:Pop
+SET t12:Rock
+SET t13:Pop
+SET t14:Rock
+SET t15:Rock
+SET t16:Pop
+
+// === Edges (50) ===
+// PERFORMS (20)
+CREATE (a1)-[:PERFORMS]->(t1)
+CREATE (a2)-[:PERFORMS]->(t2)
+CREATE (a3)-[:PERFORMS]->(t3)
+CREATE (a4)-[:PERFORMS]->(t3)
+CREATE (a5)-[:PERFORMS]->(t4)
+CREATE (a6)-[:PERFORMS]->(t5)
+CREATE (a7)-[:PERFORMS]->(t6)
+CREATE (a8)-[:PERFORMS]->(t6)
+CREATE (a1)-[:PERFORMS]->(t7)
+CREATE (a2)-[:PERFORMS]->(t8)
+CREATE (a6)-[:PERFORMS]->(t8)
+CREATE (a3)-[:PERFORMS]->(t9)
+CREATE (a4)-[:PERFORMS]->(t10)
+CREATE (a5)-[:PERFORMS]->(t11)
+CREATE (a8)-[:PERFORMS]->(t11)
+CREATE (a7)-[:PERFORMS]->(t12)
+CREATE (a1)-[:PERFORMS]->(t13)
+CREATE (a2)-[:PERFORMS]->(t14)
+CREATE (a3)-[:PERFORMS]->(t15)
+CREATE (a4)-[:PERFORMS]->(t16)
+
+// RELEASED (4)
+CREATE (a1)-[:RELEASED {date:"2019-05-21"}]->(al1)
+CREATE (a2)-[:RELEASED {date:"2020-06-12"}]->(al2)
+CREATE (a3)-[:RELEASED {date:"2021-09-03"}]->(al3)
+CREATE (a6)-[:RELEASED {date:"2022-11-04"}]->(al4)
+
+// BELONGS_TO (16)
+CREATE (t1)-[:BELONGS_TO]->(al1)
+CREATE (t2)-[:BELONGS_TO]->(al2)
+CREATE (t3)-[:BELONGS_TO]->(al3)
+CREATE (t4)-[:BELONGS_TO]->(al4)
+CREATE (t5)-[:BELONGS_TO]->(al1)
+CREATE (t6)-[:BELONGS_TO]->(al2)
+CREATE (t7)-[:BELONGS_TO]->(al3)
+CREATE (t8)-[:BELONGS_TO]->(al4)
+CREATE (t9)-[:BELONGS_TO]->(al1)
+CREATE (t10)-[:BELONGS_TO]->(al2)
+CREATE (t11)-[:BELONGS_TO]->(al3)
+CREATE (t12)-[:BELONGS_TO]->(al4)
+CREATE (t13)-[:BELONGS_TO]->(al1)
+CREATE (t14)-[:BELONGS_TO]->(al2)
+CREATE (t15)-[:BELONGS_TO]->(al3)
+CREATE (t16)-[:BELONGS_TO]->(al4)
+
+// CONTAINS (10)
+CREATE (p1)-[:CONTAINS]->(t1)
+CREATE (p1)-[:CONTAINS]->(t2)
+CREATE (p1)-[:CONTAINS]->(t5)
+CREATE (p1)-[:CONTAINS]->(t7)
+CREATE (p1)-[:CONTAINS]->(t10)
+CREATE (p2)-[:CONTAINS]->(t3)
+CREATE (p2)-[:CONTAINS]->(t4)
+CREATE (p2)-[:CONTAINS]->(t8)
+CREATE (p2)-[:CONTAINS]->(t12)
+CREATE (p2)-[:CONTAINS]->(t16)

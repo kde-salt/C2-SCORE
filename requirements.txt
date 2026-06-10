@@ -1,0 +1,10 @@
+neo4j==5.25.0
+numpy==2.0.0
+pandas==2.2.3
+scipy==1.14.1
+
+# schema_extraction
+colorama==0.4.6
+dask==2024.9.1
+termcolor==2.5.0
+scikit-learn==1.5.2

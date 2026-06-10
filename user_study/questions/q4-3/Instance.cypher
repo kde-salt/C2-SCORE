@@ -1,0 +1,218 @@
+// ==========================================
+// Regions (4)
+// ==========================================
+CREATE (R1:Region {region_id:'R1', name:'Kanto'})
+CREATE (R2:Region {region_id:'R2', name:'Kansai'})
+CREATE (R3:Region {region_id:'R3', name:'Hokkaido'})
+CREATE (R4:Region {region_id:'R4', name:'Kyushu'})
+
+// ==========================================
+// Categories (6) - parents + children
+// Electronics -> (Phones, Accessories)
+// Food       -> (Coffee, Snacks)
+// ==========================================
+CREATE (CAT1:Category {category_id:'CAT1', name:'Electronics'})
+CREATE (CAT2:Category {category_id:'CAT2', name:'Food'})
+CREATE (CAT3:Category {category_id:'CAT3', name:'Phones'})
+CREATE (CAT4:Category {category_id:'CAT4', name:'Accessories'})
+CREATE (CAT5:Category {category_id:'CAT5', name:'Coffee'})
+CREATE (CAT6:Category {category_id:'CAT6', name:'Snacks'})
+
+CREATE (CAT3)-[:IS_PART_OF]->(CAT1)
+CREATE (CAT4)-[:IS_PART_OF]->(CAT1)
+CREATE (CAT5)-[:IS_PART_OF]->(CAT2)
+CREATE (CAT6)-[:IS_PART_OF]->(CAT2)
+
+// ==========================================
+// Suppliers (4) - rating mandatory + partnerships
+// ==========================================
+CREATE (S1:Supplier {supplier_id:'S1', name:'Alpha Supply',    rating:5})
+CREATE (S2:Supplier {supplier_id:'S2', name:'Beta Traders',    rating:4})
+CREATE (S3:Supplier {supplier_id:'S3', name:'Gamma Imports',   rating:3})
+CREATE (S4:Supplier {supplier_id:'S4', name:'Delta Wholesale', rating:4})
+
+CREATE (S1)-[:PARTNERS_WITH]->(S2)
+CREATE (S2)-[:PARTNERS_WITH]->(S1)
+CREATE (S3)-[:PARTNERS_WITH]->(S4)
+CREATE (S4)-[:PARTNERS_WITH]->(S3)
+
+// ==========================================
+// Products (10) - USD prices, some without description
+// ==========================================
+CREATE (P1:Product  {product_id:'P1',  name:'Smartphone A',     price:699, description:'Entry smartphone'})
+CREATE (P2:Product  {product_id:'P2',  name:'Smartphone B',     price:899})
+CREATE (P3:Product  {product_id:'P3',  name:'Phone Case X',     price:19,  description:'Soft case'})
+CREATE (P4:Product  {product_id:'P4',  name:'Wireless Charger', price:39})
+CREATE (P5:Product  {product_id:'P5',  name:'Coffee Beans 1kg', price:25,  description:'Medium roast'})
+CREATE (P6:Product  {product_id:'P6',  name:'Drip Coffee Set',  price:45})
+CREATE (P7:Product  {product_id:'P7',  name:'Chocolate Bar',    price:2,   description:'Dark 70%'})
+CREATE (P8:Product  {product_id:'P8',  name:'Snack Mix',        price:5})
+CREATE (P9:Product  {product_id:'P9',  name:'Earbuds Z',        price:59,  description:'BT 5.3'})
+CREATE (P10:Product {product_id:'P10', name:'Screen Protector', price:12})
+
+// Product -> Category
+CREATE (P1)-[:BELONGS_TO]->(CAT3)
+CREATE (P2)-[:BELONGS_TO]->(CAT3)
+CREATE (P3)-[:BELONGS_TO]->(CAT4)
+CREATE (P4)-[:BELONGS_TO]->(CAT4)
+CREATE (P5)-[:BELONGS_TO]->(CAT5)
+CREATE (P6)-[:BELONGS_TO]->(CAT5)
+CREATE (P7)-[:BELONGS_TO]->(CAT6)
+CREATE (P8)-[:BELONGS_TO]->(CAT6)
+CREATE (P9)-[:BELONGS_TO]->(CAT4)
+CREATE (P10)-[:BELONGS_TO]->(CAT4)
+
+// MADE_IN (each product exactly one region)
+CREATE (P1)-[:MADE_IN]->(R1)
+CREATE (P2)-[:MADE_IN]->(R2)
+CREATE (P3)-[:MADE_IN]->(R1)
+CREATE (P4)-[:MADE_IN]->(R2)
+CREATE (P5)-[:MADE_IN]->(R3)
+CREATE (P6)-[:MADE_IN]->(R3)
+CREATE (P7)-[:MADE_IN]->(R4)
+CREATE (P8)-[:MADE_IN]->(R4)
+CREATE (P9)-[:MADE_IN]->(R1)
+CREATE (P10)-[:MADE_IN]->(R2)
+
+// FREQUENTLY_BOUGHT_WITH (mutual pairs)
+CREATE (P1)-[:FREQUENTLY_BOUGHT_WITH]->(P9)
+CREATE (P9)-[:FREQUENTLY_BOUGHT_WITH]->(P1)
+CREATE (P3)-[:FREQUENTLY_BOUGHT_WITH]->(P10)
+CREATE (P10)-[:FREQUENTLY_BOUGHT_WITH]->(P3)
+CREATE (P5)-[:FREQUENTLY_BOUGHT_WITH]->(P6)
+CREATE (P6)-[:FREQUENTLY_BOUGHT_WITH]->(P5)
+CREATE (P7)-[:FREQUENTLY_BOUGHT_WITH]->(P8)
+CREATE (P8)-[:FREQUENTLY_BOUGHT_WITH]->(P7)
+
+// SUPPLIES (who supplies what)
+CREATE (S1)-[:SUPPLIES]->(P1)
+CREATE (S1)-[:SUPPLIES]->(P3)
+CREATE (S1)-[:SUPPLIES]->(P9)
+CREATE (S2)-[:SUPPLIES]->(P2)
+CREATE (S2)-[:SUPPLIES]->(P4)
+CREATE (S2)-[:SUPPLIES]->(P10)
+CREATE (S3)-[:SUPPLIES]->(P5)
+CREATE (S3)-[:SUPPLIES]->(P6)
+CREATE (S4)-[:SUPPLIES]->(P7)
+CREATE (S4)-[:SUPPLIES]->(P8)
+
+// ==========================================
+// Customers (12) - multi-label with Company/Person
+// phone is optional for about half
+// ==========================================
+CREATE (CUC1:Customer:Company {customer_id:'CUC1', name:'Acorn LLC',    email:'contact@acorn.example',  phone:'+1-202-555-0101'})
+CREATE (CUC2:Customer:Company {customer_id:'CUC2', name:'Bright Co.',   email:'hello@bright.example'})
+CREATE (CUC3:Customer:Company {customer_id:'CUC3', name:'Cobalt Inc.',  email:'sales@cobalt.example',   phone:'+1-202-555-0103'})
+CREATE (CUC4:Customer:Company {customer_id:'CUC4', name:'Delta Group',  email:'info@delta.example'})
+CREATE (CUC5:Customer:Company {customer_id:'CUC5', name:'Everest Corp', email:'support@everest.example',phone:'+1-202-555-0105'})
+CREATE (CUC6:Customer:Company {customer_id:'CUC6', name:'Futura Labs',  email:'admin@futura.example'})
+
+CREATE (CUP1:Customer:Person  {customer_id:'CUP1', name:'Alice Johnson', email:'alice@example.com', phone:'+1-202-555-0201'})
+CREATE (CUP2:Customer:Person  {customer_id:'CUP2', name:'Bob Smith',     email:'bob@example.com'})
+CREATE (CUP3:Customer:Person  {customer_id:'CUP3', name:'Carol White',   email:'carol@example.com', phone:'+1-202-555-0203'})
+CREATE (CUP4:Customer:Person  {customer_id:'CUP4', name:'David Brown',   email:'david@example.com'})
+CREATE (CUP5:Customer:Person  {customer_id:'CUP5', name:'Eve Miller',    email:'eve@example.com',   phone:'+1-202-555-0205'})
+CREATE (CUP6:Customer:Person  {customer_id:'CUP6', name:'Frank Wilson',  email:'frank@example.com'})
+
+// ==========================================
+// Locations for customers
+// Companies -> LOCATED_IN, Persons -> LIVES_IN
+// ==========================================
+CREATE (CUC1)-[:LOCATED_IN]->(R1)
+CREATE (CUC2)-[:LOCATED_IN]->(R2)
+CREATE (CUC3)-[:LOCATED_IN]->(R1)
+CREATE (CUC4)-[:LOCATED_IN]->(R2)
+CREATE (CUC5)-[:LOCATED_IN]->(R3)
+CREATE (CUC6)-[:LOCATED_IN]->(R4)
+
+CREATE (CUP1)-[:LIVES_IN]->(R1)
+CREATE (CUP2)-[:LIVES_IN]->(R2)
+CREATE (CUP3)-[:LIVES_IN]->(R3)
+CREATE (CUP4)-[:LIVES_IN]->(R4)
+CREATE (CUP5)-[:LIVES_IN]->(R1)
+CREATE (CUP6)-[:LIVES_IN]->(R2)
+
+// ==========================================
+// Orders (20) - PLACES_ORDER has optional channel
+// ==========================================
+CREATE (O1:Order  {order_id:'O1',  order_date:'2025-06-03', status:'shipped'})
+CREATE (O2:Order  {order_id:'O2',  order_date:'2025-06-05', status:'pending'})
+CREATE (O3:Order  {order_id:'O3',  order_date:'2025-06-08', status:'canceled'})
+CREATE (O4:Order  {order_id:'O4',  order_date:'2025-06-10', status:'shipped'})
+CREATE (O5:Order  {order_id:'O5',  order_date:'2025-06-12', status:'pending'})
+CREATE (O6:Order  {order_id:'O6',  order_date:'2025-06-15', status:'shipped'})
+CREATE (O7:Order  {order_id:'O7',  order_date:'2025-06-18', status:'pending'})
+CREATE (O8:Order  {order_id:'O8',  order_date:'2025-06-21', status:'shipped'})
+CREATE (O9:Order  {order_id:'O9',  order_date:'2025-06-25', status:'shipped'})
+CREATE (O10:Order {order_id:'O10', order_date:'2025-06-28', status:'pending'})
+CREATE (O11:Order {order_id:'O11', order_date:'2025-07-02', status:'shipped'})
+CREATE (O12:Order {order_id:'O12', order_date:'2025-07-05', status:'pending'})
+CREATE (O13:Order {order_id:'O13', order_date:'2025-07-09', status:'pending'})
+CREATE (O14:Order {order_id:'O14', order_date:'2025-07-12', status:'shipped'})
+CREATE (O15:Order {order_id:'O15', order_date:'2025-07-16', status:'pending'})
+CREATE (O16:Order {order_id:'O16', order_date:'2025-07-20', status:'shipped'})
+CREATE (O17:Order {order_id:'O17', order_date:'2025-07-23', status:'pending'})
+CREATE (O18:Order {order_id:'O18', order_date:'2025-07-27', status:'shipped'})
+CREATE (O19:Order {order_id:'O19', order_date:'2025-08-01', status:'pending'})
+CREATE (O20:Order {order_id:'O20', order_date:'2025-08-05', status:'shipped'})
+
+// PLACES_ORDER (with optional channel)
+CREATE (CUC1)-[:PLACES_ORDER {channel:'web'}]->(O1)
+CREATE (CUC2)-[:PLACES_ORDER]->(O2)
+CREATE (CUP1)-[:PLACES_ORDER {channel:'phone'}]->(O3)
+CREATE (CUP2)-[:PLACES_ORDER]->(O4)
+CREATE (CUC3)-[:PLACES_ORDER {channel:'web'}]->(O5)
+CREATE (CUP3)-[:PLACES_ORDER]->(O6)
+CREATE (CUC4)-[:PLACES_ORDER {channel:'phone'}]->(O7)
+CREATE (CUP4)-[:PLACES_ORDER]->(O8)
+CREATE (CUC5)-[:PLACES_ORDER {channel:'web'}]->(O9)
+CREATE (CUP5)-[:PLACES_ORDER]->(O10)
+CREATE (CUC6)-[:PLACES_ORDER {channel:'phone'}]->(O11)
+CREATE (CUP6)-[:PLACES_ORDER]->(O12)
+CREATE (CUC1)-[:PLACES_ORDER]->(O13)
+CREATE (CUP1)-[:PLACES_ORDER {channel:'web'}]->(O14)
+CREATE (CUC2)-[:PLACES_ORDER]->(O15)
+CREATE (CUC3)-[:PLACES_ORDER {channel:'web'}]->(O16)
+CREATE (CUP2)-[:PLACES_ORDER]->(O17)
+CREATE (CUP3)-[:PLACES_ORDER {channel:'phone'}]->(O18)
+CREATE (CUC4)-[:PLACES_ORDER]->(O19)
+CREATE (CUC5)-[:PLACES_ORDER {channel:'web'}]->(O20)
+
+// ==========================================
+// Order line items (HAS_LINE_ITEM with quantity mandatory)
+// Each order 1-3 products
+// ==========================================
+CREATE (O1)-[:HAS_LINE_ITEM {quantity:1}]->(P1)
+CREATE (O1)-[:HAS_LINE_ITEM {quantity:1}]->(P3)
+CREATE (O2)-[:HAS_LINE_ITEM {quantity:2}]->(P2)
+CREATE (O3)-[:HAS_LINE_ITEM {quantity:3}]->(P7)
+CREATE (O3)-[:HAS_LINE_ITEM {quantity:2}]->(P8)
+CREATE (O4)-[:HAS_LINE_ITEM {quantity:1}]->(P1)
+CREATE (O4)-[:HAS_LINE_ITEM {quantity:2}]->(P10)
+CREATE (O4)-[:HAS_LINE_ITEM {quantity:1}]->(P9)
+CREATE (O5)-[:HAS_LINE_ITEM {quantity:2}]->(P5)
+CREATE (O6)-[:HAS_LINE_ITEM {quantity:1}]->(P6)
+CREATE (O6)-[:HAS_LINE_ITEM {quantity:2}]->(P5)
+CREATE (O7)-[:HAS_LINE_ITEM {quantity:2}]->(P2)
+CREATE (O7)-[:HAS_LINE_ITEM {quantity:1}]->(P4)
+CREATE (O8)-[:HAS_LINE_ITEM {quantity:1}]->(P3)
+CREATE (O9)-[:HAS_LINE_ITEM {quantity:1}]->(P1)
+CREATE (O9)-[:HAS_LINE_ITEM {quantity:1}]->(P9)
+CREATE (O10)-[:HAS_LINE_ITEM {quantity:2}]->(P10)
+CREATE (O11)-[:HAS_LINE_ITEM {quantity:2}]->(P2)
+CREATE (O11)-[:HAS_LINE_ITEM {quantity:1}]->(P3)
+CREATE (O12)-[:HAS_LINE_ITEM {quantity:3}]->(P7)
+CREATE (O13)-[:HAS_LINE_ITEM {quantity:1}]->(P4)
+CREATE (O13)-[:HAS_LINE_ITEM {quantity:2}]->(P10)
+CREATE (O14)-[:HAS_LINE_ITEM {quantity:2}]->(P5)
+CREATE (O14)-[:HAS_LINE_ITEM {quantity:1}]->(P6)
+CREATE (O15)-[:HAS_LINE_ITEM {quantity:2}]->(P8)
+CREATE (O15)-[:HAS_LINE_ITEM {quantity:3}]->(P7)
+CREATE (O16)-[:HAS_LINE_ITEM {quantity:1}]->(P1)
+CREATE (O17)-[:HAS_LINE_ITEM {quantity:2}]->(P2)
+CREATE (O17)-[:HAS_LINE_ITEM {quantity:1}]->(P9)
+CREATE (O18)-[:HAS_LINE_ITEM {quantity:1}]->(P3)
+CREATE (O18)-[:HAS_LINE_ITEM {quantity:1}]->(P4)
+CREATE (O19)-[:HAS_LINE_ITEM {quantity:1}]->(P6)
+CREATE (O20)-[:HAS_LINE_ITEM {quantity:2}]->(P5)
+CREATE (O20)-[:HAS_LINE_ITEM {quantity:2}]->(P8)

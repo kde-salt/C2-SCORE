@@ -1,0 +1,43 @@
+-- NODE TYPES --
+CREATE NODE TYPE ForumType : Forum {id DOUBLE, title STRING, creationDate DATE};
+CREATE NODE TYPE Organisation:Company_Organisation:University_Place:City_Place:Country_Tag_TagClassType : Organisation:Company | Organisation:University | Place:City | Place:Country | Tag | TagClass {name STRING, id DOUBLE, url STRING};
+CREATE NODE TYPE Comment:MessageType : Comment:Message {browserUsed STRING, content STRING, id DOUBLE, locationIP STRING, length INTEGER, creationDate DATE};
+CREATE NODE TYPE Place:ContinentType : Place:Continent {name STRING, id DOUBLE, url STRING};
+CREATE NODE TYPE PersonType : Person {browserUsed STRING, lastName STRING, firstName STRING, gender STRING, id DOUBLE, locationIP STRING, email STRING, language STRING, creationDate DATE, birthday DATE};
+CREATE NODE TYPE Post:MessageType : Post:Message {browserUsed STRING, id DOUBLE, locationIP STRING, length INTEGER, creationDate DATE, OPTIONAL content STRING, OPTIONAL language STRING, OPTIONAL imageFile STRING};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE container_of_has_interestType : CONTAINER_OF | HAS_INTEREST;
+CREATE EDGE TYPE has_creator_has_tag_is_located_inType : HAS_CREATOR | HAS_TAG | IS_LOCATED_IN;
+CREATE EDGE TYPE has_creator_has_tag_is_located_in_is_subtype_of_reply_ofType : HAS_CREATOR | HAS_TAG | IS_LOCATED_IN | IS_SUBTYPE_OF | REPLY_OF;
+CREATE EDGE TYPE has_member_has_moderatorType : HAS_MEMBER | HAS_MODERATOR;
+CREATE EDGE TYPE has_tag_is_located_in_is_part_of_knowsType : HAS_TAG | IS_LOCATED_IN | IS_PART_OF | KNOWS {OPTIONAL creationDate DATE};
+CREATE EDGE TYPE has_typeType : HAS_TYPE;
+CREATE EDGE TYPE is_part_ofType : IS_PART_OF;
+CREATE EDGE TYPE likesType : LIKES {creationDate DATE};
+CREATE EDGE TYPE reply_of_work_atType : REPLY_OF | WORK_AT {OPTIONAL workFrom INTEGER};
+CREATE EDGE TYPE study_atType : STUDY_AT {classYear INTEGER};
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (ForumType),
+  (Organisation:Company_Organisation:University_Place:City_Place:Country_Tag_TagClassType),
+  (Comment:MessageType),
+  (Place:ContinentType),
+  (PersonType),
+  (Post:MessageType),
+  (:ForumType|PersonType)-[container_of_has_interestType]->(:TagType|Post:MessageType),
+  (:Post:MessageType)-[has_creator_has_tag_is_located_inType]->(:TagType|PersonType|Place:CountryType),
+  (:TagClassType|Comment:MessageType|Organisation:UniversityType|Organisation:CompanyType)-[has_creator_has_tag_is_located_in_is_subtype_of_reply_ofType]->(:TagClassType|TagType|Comment:MessageType|Place:CityType|PersonType|Place:CountryType),
+  (:ForumType)-[has_member_has_moderatorType]->(:PersonType),
+  (:Place:CityType|ForumType|PersonType)-[has_tag_is_located_in_is_part_of_knowsType]->(:TagType|Place:CityType|PersonType|Place:CountryType),
+  (:TagType)-[has_typeType]->(:TagClassType),
+  (:Place:CountryType)-[is_part_ofType]->(:Place:ContinentType),
+  (:PersonType)-[likesType]->(:Comment:MessageType|Post:MessageType),
+  (:Comment:MessageType|PersonType)-[reply_of_work_atType]->(:Post:MessageType|Organisation:CompanyType),
+  (:PersonType)-[study_atType]->(:Organisation:UniversityType),
+
+  // Constraints
+  FOR (x:TagType) SINGLETON y WITHIN (x)-[y: has_typeType]->(:TagClassType)
+  FOR (x:Place:CountryType) SINGLETON y WITHIN (x)-[y: is_part_ofType]->(:Place:ContinentType)
+  FOR (x:PersonType) SINGLETON y WITHIN (x)-[y: study_atType]->(:Organisation:UniversityType)
+}

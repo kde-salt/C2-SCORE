@@ -1,0 +1,26 @@
+-- NODE TYPES --
+CREATE NODE TYPE SynapseSetType : SynapseSet;
+CREATE NODE TYPE SegmentType : Segment {post INTEGER, bodyId INTEGER, size INTEGER, roiInfo STRING, pre INTEGER, OPTIONAL statusLabel STRING, OPTIONAL alpha2 BOOLEAN, OPTIONAL status STRING, OPTIONAL cropped BOOLEAN, OPTIONAL alpha3 BOOLEAN, OPTIONAL alpha1 BOOLEAN, OPTIONAL type STRING, OPTIONAL instance STRING};
+CREATE NODE TYPE MetaType : Meta {postHighAccuracyThreshold DOUBLE, totalPreCount INTEGER, latestMutationId INTEGER, preHPThreshold DOUBLE, primaryRois STRING, neuroglancerInfo STRING, statusDefinitions STRING, logo STRING, totalPostCount INTEGER, roiHierarchy STRING, postHPThreshold DOUBLE, dataset STRING, roiInfo STRING, superLevelRois STRING, lastDatabaseEdit DATE, neuroglancerMeta STRING, uuid STRING, meshHost STRING};
+CREATE NODE TYPE SynapseType : Synapse {type STRING, location STRING, confidence DOUBLE, OPTIONAL alpha2 BOOLEAN, OPTIONAL alpha1 BOOLEAN, OPTIONAL alpha3 BOOLEAN};
+CREATE NODE TYPE Neuron:SegmentType : Neuron:Segment {post INTEGER, bodyId INTEGER, statusLabel STRING, size INTEGER, roiInfo STRING, status STRING, pre INTEGER, OPTIONAL alpha2 BOOLEAN, OPTIONAL type STRING, OPTIONAL instance STRING, OPTIONAL alpha1 BOOLEAN, OPTIONAL alpha3 BOOLEAN, OPTIONAL cropped BOOLEAN};
+CREATE NODE TYPE Neuron:Segment_SegmentType : Neuron:Segment | Segment {post INTEGER, bodyId INTEGER, statusLabel STRING, size INTEGER, roiInfo STRING, status STRING, pre INTEGER, OPTIONAL instance STRING, OPTIONAL cropped BOOLEAN, OPTIONAL alpha1 BOOLEAN, OPTIONAL alpha2 BOOLEAN, OPTIONAL alpha3 BOOLEAN};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE connects_toType : CONNECTS_TO {OPTIONAL weightHP INTEGER, OPTIONAL weight INTEGER, OPTIONAL roiInfo STRING};
+CREATE EDGE TYPE containsType : CONTAINS;
+CREATE EDGE TYPE synapses_toType : SYNAPSES_TO;
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (SynapseSetType),
+  (SegmentType),
+  (MetaType),
+  (SynapseType),
+  (Neuron:SegmentType),
+  (Neuron:Segment_SegmentType),
+  (:SynapseSetType|Neuron:SegmentType|SegmentType|Neuron:SegmentType)-[connects_toType]->(:SynapseSetType|SegmentType|SegmentType|Neuron:SegmentType),
+  (:SynapseSetType|Neuron:SegmentType|SegmentType)-[containsType]->(:SynapseSetType|SynapseType),
+  (:SynapseType)-[synapses_toType]->(:SynapseType),
+
+  // Constraints
+}

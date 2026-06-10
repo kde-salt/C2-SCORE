@@ -1,0 +1,36 @@
+-- NODE TYPES --
+CREATE NODE TYPE CompanyType : Company {name STRING};
+CREATE NODE TYPE CountryType : Country {countryCode STRING};
+CREATE NODE TYPE AchievementType : Achievement {percentage DOUBLE, OPTIONAL name STRING};
+CREATE NODE TYPE PlayerType : Player {dateRetrieved DATE, communityVisibilityState INTEGER, personaName STRING, personaState INTEGER, steamId STRING, OPTIONAL lastLogOff DATE, OPTIONAL profileState INTEGER, OPTIONAL timeCreated DATE, OPTIONAL commentPermission INTEGER, OPTIONAL locStateCode STRING, OPTIONAL locCityId INTEGER};
+CREATE NODE TYPE App_App:Accounting_App:Action_App:Adventure_App:Animation&Modeling_App:AudioProduction_App:Casual_App:Design&Illustration_App:EarlyAccess_App:Education_App:FreeToPlay_App:Indie_App:MassivelyMultiplayer_App:PhotoEditing_App:Racing_App:Rpg_App:Simulation_App:SoftwareTraining_App:Sports_App:Utilities_App:VideoProduction_App:WebPublishing_Strategy:AppType : App | App:Accounting | App:Action | App:Adventure | App:Animation&Modeling | App:AudioProduction | App:Casual | App:Design&Illustration | App:EarlyAccess | App:Education | App:FreeToPlay | App:Indie | App:MassivelyMultiplayer | App:PhotoEditing | App:Racing | App:Rpg | App:Simulation | App:SoftwareTraining | App:Sports | App:Utilities | App:VideoProduction | App:WebPublishing | Strategy:App {requiredAge INTEGER, isMultiplayer INTEGER, releaseDate DATE, type STRING, appId INTEGER, title STRING, rating INTEGER, price DOUBLE};
+CREATE NODE TYPE GroupType : Group {groupId STRING};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE developed_byType : DEVELOPED_BY;
+CREATE EDGE TYPE developed_by_has_published_byType : DEVELOPED_BY | HAS | PUBLISHED_BY;
+CREATE EDGE TYPE developed_by_published_byType : DEVELOPED_BY | PUBLISHED_BY;
+CREATE EDGE TYPE hasType : HAS;
+CREATE EDGE TYPE is_friend_ofType : IS_FRIEND_OF {dateRetrieved DATE, friendSince DATE};
+CREATE EDGE TYPE is_member_of_is_now_playing_is_primary_group_of_lives_inType : IS_MEMBER_OF | IS_NOW_PLAYING | IS_PRIMARY_GROUP_OF | LIVES_IN {dateRetrieved DATE};
+CREATE EDGE TYPE playsType : PLAYS {dateRetrieved DATE, playtimeForever INTEGER, playtime2Weeks INTEGER};
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (CompanyType),
+  (CountryType),
+  (AchievementType),
+  (PlayerType),
+  (App_App:Accounting_App:Action_App:Adventure_App:Animation&Modeling_App:AudioProduction_App:Casual_App:Design&Illustration_App:EarlyAccess_App:Education_App:FreeToPlay_App:Indie_App:MassivelyMultiplayer_App:PhotoEditing_App:Racing_App:Rpg_App:Simulation_App:SoftwareTraining_App:Sports_App:Utilities_App:VideoProduction_App:WebPublishing_Strategy:AppType),
+  (GroupType),
+  (:App:SoftwareTrainingType)-[developed_byType]->(:CompanyType),
+  (:App:SportsType|App:Animation&ModelingType|App:FreeToPlayType|Strategy:AppType)-[developed_by_has_published_byType]->(:AchievementType|CompanyType),
+  (:App:IndieType|App:Animation&ModelingType|App:AdventureType|App:UtilitiesType|App:FreeToPlayType|App:VideoProductionType|App:MassivelyMultiplayerType|App:UtilitiesType|App:EarlyAccessType|App:MassivelyMultiplayerType|App:EducationType|App:AccountingType|App:WebPublishingType|App:SimulationType|App:ActionType|App:CasualType|App:RacingType|App:SoftwareTrainingType|App:PhotoEditingType|App:RpgType|AppType|App:Design&IllustrationType|App:AudioProductionType)-[developed_by_published_byType]->(:CompanyType),
+  (:App:EarlyAccessType|App:AudioProductionType|App:UtilitiesType|App:RpgType|App:EducationType|App:IndieType|App:SportsType|AppType|App:AdventureType|App:Design&IllustrationType|App:SimulationType|Strategy:AppType|App:ActionType|App:CasualType|App:RacingType)-[hasType]->(:AchievementType),
+  (:PlayerType)-[is_friend_ofType]->(:PlayerType),
+  (:GroupType|PlayerType)-[is_member_of_is_now_playing_is_primary_group_of_lives_inType]->(:App:RpgType|App:IndieType|App:AdventureType|App:SimulationType|App:FreeToPlayType|GroupType|PlayerType|CountryType|Strategy:AppType|App:ActionType|App:RacingType),
+  (:PlayerType)-[playsType]->(:App:RpgType|App:EducationType|App:IndieType|App:AudioProductionType|App:Animation&ModelingType|App:AdventureType|App:UtilitiesType|App:Design&IllustrationType|App:WebPublishingType|App:SimulationType|App:FreeToPlayType|Strategy:AppType|App:ActionType|App:CasualType|App:MassivelyMultiplayerType|App:AccountingType|App:SportsType|AppType|App:PhotoEditingType|App:EarlyAccessType|App:RacingType),
+
+  // Constraints
+  FOR (x:AchievementType) SINGLETON x WITHIN (:App:EarlyAccessType|App:AudioProductionType|App:UtilitiesType|App:RpgType|App:EducationType|App:IndieType|App:SportsType|AppType|App:AdventureType|App:Design&IllustrationType|App:SimulationType|Strategy:AppType|App:ActionType|App:CasualType|App:RacingType)-[y: hasType]->(x)
+  FOR (x:PlayerType) SINGLETON x,y WITHIN (x)-[y: is_friend_ofType]->(:PlayerType)
+}
