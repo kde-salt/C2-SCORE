@@ -1,0 +1,73 @@
+-- NODE TYPES --
+CREATE NODE TYPE PortType : Port {port INTEGER};
+CREATE NODE TYPE Software:ServiceType : Software:Service {versions DATE, name STRING, OPTIONAL ports DATE, OPTIONAL dependencies STRING};
+CREATE NODE TYPE Network:ZoneType : Network:Zone {zone INTEGER, size INTEGER, ip DATE};
+CREATE NODE TYPE OS:ProcessType : OS:Process {name STRING, startTime DOUBLE};
+CREATE NODE TYPE RackType : Rack {name STRING, zone INTEGER, rack INTEGER};
+CREATE NODE TYPE Application:Process_Service:ProcessType : Application:Process | Service:Process {name STRING, startTime DOUBLE, pid INTEGER};
+CREATE NODE TYPE InterfaceType : Interface {ip DATE};
+CREATE NODE TYPE Machine_Router:Egress_Software_VersionType : Machine | Router:Egress | Software | Version {name STRING};
+CREATE NODE TYPE Software:ApplicationType : Software:Application {ports DATE, name STRING, dependencies STRING};
+CREATE NODE TYPE Software:OSType : Software:OS {versions DATE, name STRING};
+CREATE NODE TYPE TypeType : Type {disk INTEGER, type STRING, ram INTEGER, name STRING, id INTEGER, cpu INTEGER};
+CREATE NODE TYPE SwitchType : Switch {ip DATE, rack INTEGER};
+CREATE NODE TYPE DataCenterType : DataCenter {name STRING, location STRING};
+CREATE NODE TYPE RouterType : Router {name STRING, zone INTEGER};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE connects_listensType : CONNECTS | LISTENS;
+CREATE EDGE TYPE connects_routesType : CONNECTS | ROUTES;
+CREATE EDGE TYPE containsType : CONTAINS;
+CREATE EDGE TYPE contains_depends_on_holdsType : CONTAINS | DEPENDS_ON | HOLDS;
+CREATE EDGE TYPE depends_onType : DEPENDS_ON;
+CREATE EDGE TYPE depends_on_holdsType : DEPENDS_ON | HOLDS;
+CREATE EDGE TYPE depends_on_instanceType : DEPENDS_ON | INSTANCE;
+CREATE EDGE TYPE depends_on_listens_versionType : DEPENDS_ON | LISTENS | VERSION;
+CREATE EDGE TYPE exposesType : EXPOSES;
+CREATE EDGE TYPE instanceType : INSTANCE;
+CREATE EDGE TYPE previousType : PREVIOUS;
+CREATE EDGE TYPE routesType : ROUTES;
+CREATE EDGE TYPE runsType : RUNS;
+CREATE EDGE TYPE typeType : TYPE;
+CREATE EDGE TYPE versionType : VERSION;
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (PortType),
+  (Software:ServiceType),
+  (Network:ZoneType),
+  (OS:ProcessType),
+  (RackType),
+  (Application:Process_Service:ProcessType),
+  (InterfaceType),
+  (Machine_Router:Egress_Software_VersionType),
+  (Software:ApplicationType),
+  (Software:OSType),
+  (TypeType),
+  (SwitchType),
+  (DataCenterType),
+  (RouterType),
+  (:InterfaceType|Service:ProcessType)-[connects_listensType]->(:PortType|Network:ZoneType),
+  (:Router:EgressType|InterfaceType|SwitchType)-[connects_routesType]->(:InterfaceType),
+  (:DataCenterType)-[containsType]->(:Router:EgressType|RackType),
+  (:Application:ProcessType|DataCenterType|RackType)-[contains_depends_on_holdsType]->(:MachineType|RouterType|Service:ProcessType),
+  (:Software:ApplicationType)-[depends_onType]->(:Software:ApplicationType|VersionType),
+  (:Software:ApplicationType|RackType)-[depends_on_holdsType]->(:Software:ServiceType|SwitchType),
+  (:OS:ProcessType|Software:ServiceType)-[depends_on_instanceType]->(:VersionType),
+  (:Software:ServiceType|Software:ApplicationType|Application:ProcessType)-[depends_on_listens_versionType]->(:SoftwareType|PortType|VersionType),
+  (:InterfaceType)-[exposesType]->(:PortType),
+  (:Service:ProcessType|Application:ProcessType)-[instanceType]->(:SoftwareType|VersionType|Software:ServiceType|Software:ApplicationType|Software:ApplicationType),
+  (:VersionType)-[previousType]->(:VersionType),
+  (:MachineType|Network:ZoneType|RouterType)-[routesType]->(:InterfaceType),
+  (:MachineType)-[runsType]->(:OS:ProcessType|Application:ProcessType|Service:ProcessType),
+  (:MachineType)-[typeType]->(:TypeType),
+  (:Software:OSType)-[versionType]->(:VersionType),
+
+  // Constraints
+  FOR (x:Router:EgressType|RackType) SINGLETON x WITHIN (:DataCenterType)-[y: containsType]->(x)
+  FOR (x:PortType) SINGLETON x WITHIN (:InterfaceType)-[y: exposesType]->(x)
+  FOR (x:Service:ProcessType|Application:ProcessType) SINGLETON y WITHIN (x)-[y: instanceType]->(:SoftwareType|VersionType|Software:ServiceType|Software:ApplicationType|Software:ApplicationType)
+  FOR (x:VersionType) SINGLETON x,y WITHIN (x)-[y: previousType]->(:VersionType)
+  FOR (x:OS:ProcessType|Application:ProcessType|Service:ProcessType) SINGLETON x WITHIN (:MachineType)-[y: runsType]->(x)
+  FOR (x:MachineType) SINGLETON y WITHIN (x)-[y: typeType]->(:TypeType)
+  FOR (x:VersionType) SINGLETON x WITHIN (:Software:OSType)-[y: versionType]->(x)
+}

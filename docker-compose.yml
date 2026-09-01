@@ -1,0 +1,106 @@
+name: c2score
+
+services:
+  # Neo4j 5.26.0 Enterprise with APOC. Enterprise is required because the
+  # experiments use many databases (Community supports only one) and because
+  # the distributed dumps were created with 5.26.0.
+  #
+  # NEO4J_ACCEPT_LICENSE_AGREEMENT=eval starts the server under the Neo4j
+  # Evaluation Agreement; see README section 1.1.
+  neo4j:
+    image: neo4j:5.26.0-enterprise
+    environment:
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "eval"
+      NEO4J_AUTH: "neo4j/${C2_NEO4J_PASSWORD:-password}"
+      NEO4J_PLUGINS: '["apoc"]'
+      # The experiments create per-method schema databases and user-study
+      # scenarios; the 100 default is not enough. (The name to set in Neo4j 5
+      # is dbms.max_databases; server.max_databases is the deprecated alias.)
+      NEO4J_dbms_max__databases: "${NEO4J_MAX_DATABASES:-150}"
+      NEO4J_server_memory_heap_initial__size: "${NEO4J_HEAP:-8G}"
+      NEO4J_server_memory_heap_max__size: "${NEO4J_HEAP:-8G}"
+      NEO4J_server_memory_pagecache_size: "${NEO4J_PAGECACHE:-8G}"
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+      NEO4J_dbms_security_procedures_allowlist: "apoc.*"
+      # Deliberately NOT named NEO4J_PASSWORD: the image turns every NEO4J_*
+      # variable into a neo4j.conf setting, and an unknown setting name makes
+      # the server refuse to start. import_dumps.sh and the healthcheck read
+      # this one instead.
+      C2_NEO4J_PASSWORD: "${C2_NEO4J_PASSWORD:-password}"
+    ports:
+      - "${NEO4J_HTTP_PORT:-7474}:7474"
+      - "${NEO4J_BOLT_PORT:-7687}:7687"
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - ${DUMP_DIR:-./edbt_dumps}:/dumps:ro
+      - ./import_dumps.sh:/scripts/import_dumps.sh:ro
+    healthcheck:
+      # An open port does not mean the DBMS finished starting, so query it.
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$$C2_NEO4J_PASSWORD\" -d system 'SHOW DATABASES YIELD name' >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 120s
+
+  # Python image: every experiment entry point, and the PG-HIVE commit step.
+  experiment:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: experiment
+    image: c2score/experiment:1.0
+    init: true
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    environment:
+      NEO4J_URI: "bolt://neo4j:7687"
+      NEO4J_USER: "${NEO4J_USER:-neo4j}"
+      NEO4J_PASSWORD: "${C2_NEO4J_PASSWORD:-password}"
+      PYTHONHASHSEED: "0"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    command: ["bash"]
+
+  # JDK 11 + sbt image, needed only to (re)run the PG-HIVE extraction itself.
+  # Behind a profile so the default reproduction path never builds it.
+  pghive:
+    profiles: ["pghive"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: pghive
+    image: c2score/pghive:1.0
+    init: true
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+      # Seeded from the image, so the bind mount above never hides the compiled
+      # output and the host's own target/ never mixes in.
+      - pghive-target:/workspace/schema_extraction/pg_hive/schemadiscovery/target
+      - pghive-project-target:/workspace/schema_extraction/pg_hive/schemadiscovery/project/target
+      # Spark scratch space (spark.local.dir is unset, so it uses java.io.tmpdir)
+      - pghive-tmp:/tmp
+    environment:
+      NEO4J_URI: "bolt://neo4j:7687"
+      NEO4J_USER: "${NEO4J_USER:-neo4j}"
+      NEO4J_PASSWORD: "${C2_NEO4J_PASSWORD:-password}"
+      PYTHONHASHSEED: "0"
+      JAVA_11_HOME: "/opt/java/openjdk"
+      PGHIVE_XMX: "${PGHIVE_XMX:-8G}"
+      PGHIVE_CODECACHE: "${PGHIVE_CODECACHE:-1G}"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    command: ["bash"]
+
+volumes:
+  neo4j-data:
+  neo4j-logs:
+  pghive-target:
+  pghive-project-target:
+  pghive-tmp:

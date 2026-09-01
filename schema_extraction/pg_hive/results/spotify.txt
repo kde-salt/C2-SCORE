@@ -1,0 +1,26 @@
+-- NODE TYPES --
+CREATE NODE TYPE AlbumType : Album {albumUri STRING, album_name STRING};
+CREATE NODE TYPE TrackType : Track {duration_ms INTEGER, track_name STRING, trackUri STRING};
+CREATE NODE TYPE ArtistType : Artist {artist_name STRING, artistUri STRING};
+CREATE NODE TYPE PlaylistType : Playlist {collaborative BOOLEAN, duration_ms INTEGER, name STRING, num_edits INTEGER, num_albums INTEGER, num_followers INTEGER, num_artists INTEGER, modified_at INTEGER, num_tracks INTEGER, pid INTEGER};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE belongs_toType : BELONGS_TO;
+CREATE EDGE TYPE containsType : CONTAINS;
+CREATE EDGE TYPE performsType : PERFORMS;
+CREATE EDGE TYPE releasedType : RELEASED;
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (AlbumType),
+  (TrackType),
+  (ArtistType),
+  (PlaylistType),
+  (:TrackType)-[belongs_toType]->(:AlbumType),
+  (:PlaylistType)-[containsType]->(:TrackType),
+  (:ArtistType)-[performsType]->(:TrackType),
+  (:ArtistType)-[releasedType]->(:AlbumType),
+
+  // Constraints
+  FOR (x:TrackType) SINGLETON y WITHIN (x)-[y: belongs_toType]->(:AlbumType)
+  FOR (x:TrackType) SINGLETON x WITHIN (:ArtistType)-[y: performsType]->(x)
+}

@@ -1,0 +1,38 @@
+# Git metadata and local tooling
+.git
+.gitignore
+.claude/
+.vscode/
+.mypy_cache/
+
+# Local-only notes (never ship)
+CLAUDE.local.md
+.env
+
+# Host virtualenv / bytecode
+.venv/
+**/__pycache__/
+*.pyc
+
+# Scala / sbt build output (rebuilt inside the image)
+**/target/
+.bsp/
+.bloop/
+.metals/
+
+# Dump files are mounted at run time, never baked into an image
+edbt_dumps/
+
+# Experiment run logs and scratch outputs
+*.log
+*.jsonl
+*.bak
+schema_extraction/logs/
+
+# PG-HIVE fixed-path scratch output
+schema_extraction/pg_hive/schemadiscovery/pg_schema_output_*.txt
+schema_extraction/pg_hive/schemadiscovery/schema_output.xsd
+
+# User study raw responses contain personal information and are never published
+user_study/followup/results/
+user_study/original/results/

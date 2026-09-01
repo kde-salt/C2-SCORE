@@ -1,0 +1,88 @@
+-- NODE TYPES --
+CREATE NODE TYPE Resource:ontolex__FormType : Resource:ontolex__Form {ontolex__writtenRep STRING, uri STRING};
+CREATE NODE TYPE Resource:ontolex__LexicalEntry:li__Adjective_Resource:ontolex__LexicalEntry:li__AdjectiveSatellite_Resource:ontolex__LexicalEntry:li__Adverb_Resource:ontolex__LexicalEntry:li__Noun_Resource:ontolex__LexicalEntry:li__VerbType : Resource:ontolex__LexicalEntry:li__Adjective | Resource:ontolex__LexicalEntry:li__AdjectiveSatellite | Resource:ontolex__LexicalEntry:li__Adverb | Resource:ontolex__LexicalEntry:li__Noun | Resource:ontolex__LexicalEntry:li__Verb {ontolex__canonicalForm STRING, wn__partOfSpeech STRING, uri STRING};
+CREATE NODE TYPE Resource:ontolex__LexicalConcept:li__AdverbType : Resource:ontolex__LexicalConcept:li__Adverb {wn__definition STRING, wn__example STRING, wn__partOfSpeech STRING, uri STRING, dct__subject STRING};
+CREATE NODE TYPE ResourceType : Resource {rdfs__label STRING, uri STRING};
+CREATE NODE TYPE Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType : Resource:ontolex__LexicalConcept:li__AdjectiveSatellite {wn__definition STRING, wn__example STRING, wn__partOfSpeech STRING, uri STRING, dct__subject STRING};
+CREATE NODE TYPE _GraphConfigType : _GraphConfig {_keepCustomDataTypes BOOLEAN, _handleVocabUris INTEGER, _domainRel STRING, _classLabel STRING, _objectPropertyLabel STRING, _applyNeo4jNaming BOOLEAN, _rangeRel STRING, _subClassOfRel STRING, _keepLangTag BOOLEAN, _handleMultival INTEGER, _dataTypePropertyLabel STRING, _handleRDFTypes INTEGER, _subPropertyOfRell STRING};
+CREATE NODE TYPE Resource:li__Verb:ontolex__LexicalConcept_Resource:ontolex__LexicalConcept:li__Adjective_Resource:ontolex__LexicalConcept:li__AdjectiveSatellite_Resource:ontolex__LexicalConcept:li__Adverb_Resource:ontolex__LexicalConcept:li__NounType : Resource:li__Verb:ontolex__LexicalConcept | Resource:ontolex__LexicalConcept:li__Adjective | Resource:ontolex__LexicalConcept:li__AdjectiveSatellite | Resource:ontolex__LexicalConcept:li__Adverb | Resource:ontolex__LexicalConcept:li__Noun {wn__definition STRING, wn__partOfSpeech STRING, uri STRING, dct__subject STRING};
+CREATE NODE TYPE _NsPrefDefType : _NsPrefDef {rdf STRING, li STRING, wn STRING, pwnlemma STRING, dct STRING, ontolex STRING, sch STRING, rdfs STRING, pwnid STRING, synsem STRING, ili STRING, skos STRING, lime STRING, owl STRING};
+CREATE NODE TYPE Resource:ontolex__LexicalConcept:li__NounType : Resource:ontolex__LexicalConcept:li__Noun {wn__definition STRING, wn__example STRING, wn__partOfSpeech STRING, uri STRING, dct__subject STRING};
+CREATE NODE TYPE Resource:li__Verb:ontolex__LexicalConcept_Resource:ontolex__LexicalConcept:li__AdjectiveType : Resource:li__Verb:ontolex__LexicalConcept | Resource:ontolex__LexicalConcept:li__Adjective {wn__definition STRING, wn__example STRING, wn__partOfSpeech STRING, uri STRING, dct__subject STRING};
+CREATE NODE TYPE Resource_Resource:ontolex__LexicalSenseType : Resource | Resource:ontolex__LexicalSense {uri STRING};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE ontolex__canonicalformType : ontolex__canonicalForm;
+CREATE EDGE TYPE ontolex__islexicalizedsenseof_wn__also_wn__has_domain_topicType : ontolex__isLexicalizedSenseOf | wn__also | wn__has_domain_topic;
+CREATE EDGE TYPE ontolex__islexicalizedsenseof_wn__similarType : ontolex__isLexicalizedSenseOf | wn__similar;
+CREATE EDGE TYPE ontolex__senseType : ontolex__sense;
+CREATE EDGE TYPE ontolex__sense_wn__exemplifiesType : ontolex__sense | wn__exemplifies;
+CREATE EDGE TYPE ontolex__sense_wn__pertainymType : ontolex__sense | wn__pertainym;
+CREATE EDGE TYPE synsem__synbehavior_wn__alsoType : synsem__synBehavior | wn__also;
+CREATE EDGE TYPE wn__alsoType : wn__also;
+CREATE EDGE TYPE wn__also_wn__domain_region_wn__holo_part_wn__mero_memberType : wn__also | wn__domain_region | wn__holo_part | wn__mero_member;
+CREATE EDGE TYPE wn__antonym_wn__derivation_wn__domain_region_wn__exemplifies_wn__is_exemplified_by_wn__participleType : wn__antonym | wn__derivation | wn__domain_region | wn__exemplifies | wn__is_exemplified_by | wn__participle;
+CREATE EDGE TYPE wn__attributeType : wn__attribute;
+CREATE EDGE TYPE wn__attribute_wn__is_exemplified_byType : wn__attribute | wn__is_exemplified_by;
+CREATE EDGE TYPE wn__causes_wn__entails_wn__hyponymType : wn__causes | wn__entails | wn__hyponym;
+CREATE EDGE TYPE wn__domain_regionType : wn__domain_region;
+CREATE EDGE TYPE wn__domain_region_wn__domain_topicType : wn__domain_region | wn__domain_topic;
+CREATE EDGE TYPE wn__domain_topicType : wn__domain_topic;
+CREATE EDGE TYPE wn__domain_topic_wn__has_domain_regionType : wn__domain_topic | wn__has_domain_region;
+CREATE EDGE TYPE wn__domain_topic_wn__has_domain_region_wn__has_domain_topic_wn__hypernym_wn__instance_hyponym_wn__mero_partType : wn__domain_topic | wn__has_domain_region | wn__has_domain_topic | wn__hypernym | wn__instance_hyponym | wn__mero_part;
+CREATE EDGE TYPE wn__domain_topic_wn__has_domain_region_wn__similarType : wn__domain_topic | wn__has_domain_region | wn__similar;
+CREATE EDGE TYPE wn__exemplifiesType : wn__exemplifies;
+CREATE EDGE TYPE wn__exemplifies_wn__has_domain_topic_wn__instance_hypernym_wn__is_exemplified_byType : wn__exemplifies | wn__has_domain_topic | wn__instance_hypernym | wn__is_exemplified_by;
+CREATE EDGE TYPE wn__has_domain_topic_wn__hyponym_wn__similarType : wn__has_domain_topic | wn__hyponym | wn__similar;
+CREATE EDGE TYPE wn__has_domain_topic_wn__mero_substanceType : wn__has_domain_topic | wn__mero_substance;
+CREATE EDGE TYPE wn__holo_member_wn__is_caused_by_wn__is_entailed_byType : wn__holo_member | wn__is_caused_by | wn__is_entailed_by;
+CREATE EDGE TYPE wn__holo_substanceType : wn__holo_substance;
+CREATE EDGE TYPE wn__hypernymType : wn__hypernym;
+CREATE EDGE TYPE wn__is_exemplified_byType : wn__is_exemplified_by;
+CREATE EDGE TYPE wn__similarType : wn__similar;
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (Resource:ontolex__FormType),
+  (Resource:ontolex__LexicalEntry:li__Adjective_Resource:ontolex__LexicalEntry:li__AdjectiveSatellite_Resource:ontolex__LexicalEntry:li__Adverb_Resource:ontolex__LexicalEntry:li__Noun_Resource:ontolex__LexicalEntry:li__VerbType),
+  (Resource:ontolex__LexicalConcept:li__AdverbType),
+  (ResourceType),
+  (Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (_GraphConfigType),
+  (Resource:li__Verb:ontolex__LexicalConcept_Resource:ontolex__LexicalConcept:li__Adjective_Resource:ontolex__LexicalConcept:li__AdjectiveSatellite_Resource:ontolex__LexicalConcept:li__Adverb_Resource:ontolex__LexicalConcept:li__NounType),
+  (_NsPrefDefType),
+  (Resource:ontolex__LexicalConcept:li__NounType),
+  (Resource:li__Verb:ontolex__LexicalConcept_Resource:ontolex__LexicalConcept:li__AdjectiveType),
+  (Resource_Resource:ontolex__LexicalSenseType),
+  (:Resource:ontolex__LexicalEntry:li__AdverbType|Resource:ontolex__LexicalEntry:li__VerbType|Resource:ontolex__LexicalEntry:li__NounType|Resource:ontolex__LexicalEntry:li__AdjectiveSatelliteType|Resource:ontolex__LexicalEntry:li__AdjectiveType)-[ontolex__canonicalformType]->(:Resource:ontolex__FormType),
+  (:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalConcept:li__AdjectiveType)-[ontolex__islexicalizedsenseof_wn__also_wn__has_domain_topicType]->(:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__AdverbType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalConcept:li__AdjectiveType)-[ontolex__islexicalizedsenseof_wn__similarType]->(:Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalEntry:li__AdverbType|Resource:ontolex__LexicalEntry:li__AdjectiveType|Resource:ontolex__LexicalEntry:li__NounType)-[ontolex__senseType]->(:Resource:ontolex__LexicalSenseType),
+  (:Resource:ontolex__LexicalEntry:li__AdjectiveSatelliteType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType)-[ontolex__sense_wn__exemplifiesType]->(:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalEntry:li__VerbType)-[ontolex__sense_wn__pertainymType]->(:Resource:ontolex__LexicalSenseType),
+  (:Resource:ontolex__LexicalEntry:li__VerbType|Resource:ontolex__LexicalConcept:li__AdverbType)-[synsem__synbehavior_wn__alsoType]->(:ResourceType|Resource:ontolex__LexicalConcept:li__AdverbType),
+  (:Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType|Resource:li__Verb:ontolex__LexicalConceptType)-[wn__alsoType]->(:Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__NounType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalConcept:li__NounType)-[wn__also_wn__domain_region_wn__holo_part_wn__mero_memberType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalSenseType)-[wn__antonym_wn__derivation_wn__domain_region_wn__exemplifies_wn__is_exemplified_by_wn__participleType]->(:Resource:ontolex__LexicalSenseType),
+  (:Resource:ontolex__LexicalConcept:li__AdjectiveType)-[wn__attributeType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalConcept:li__NounType)-[wn__attribute_wn__is_exemplified_byType]->(:Resource:ontolex__LexicalConcept:li__AdjectiveType),
+  (:Resource:li__Verb:ontolex__LexicalConceptType)-[wn__causes_wn__entails_wn__hyponymType]->(:Resource:li__Verb:ontolex__LexicalConceptType),
+  (:Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__AdverbType)-[wn__domain_regionType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType)-[wn__domain_region_wn__domain_topicType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType|Resource:ontolex__LexicalConcept:li__AdverbType)-[wn__domain_topicType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalConcept:li__NounType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType)-[wn__domain_topic_wn__has_domain_regionType]->(:Resource:ontolex__LexicalConcept:li__AdverbType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalConcept:li__NounType)-[wn__domain_topic_wn__has_domain_region_wn__has_domain_topic_wn__hypernym_wn__instance_hyponym_wn__mero_partType]->(:Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:ontolex__LexicalConcept:li__NounType|Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalConcept:li__AdjectiveType)-[wn__domain_topic_wn__has_domain_region_wn__similarType]->(:Resource:ontolex__LexicalSenseType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__AdverbType|Resource:ontolex__LexicalConcept:li__AdjectiveType)-[wn__exemplifiesType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:ontolex__LexicalConcept:li__NounType)-[wn__exemplifies_wn__has_domain_topic_wn__instance_hypernym_wn__is_exemplified_byType]->(:Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:ontolex__LexicalConcept:li__NounType|Resource:li__Verb:ontolex__LexicalConceptType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalConcept:li__NounType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType)-[wn__has_domain_topic_wn__hyponym_wn__similarType]->(:Resource:ontolex__LexicalConcept:li__AdjectiveType|Resource:ontolex__LexicalConcept:li__NounType|Resource:ontolex__LexicalConcept:li__AdverbType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalConcept:li__NounType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType)-[wn__has_domain_topic_wn__mero_substanceType]->(:Resource:ontolex__LexicalConcept:li__NounType|Resource:ontolex__LexicalConcept:li__AdjectiveSatelliteType),
+  (:Resource:ontolex__LexicalConcept:li__NounType|Resource:li__Verb:ontolex__LexicalConceptType)-[wn__holo_member_wn__is_caused_by_wn__is_entailed_byType]->(:Resource:ontolex__LexicalConcept:li__NounType|Resource:li__Verb:ontolex__LexicalConceptType),
+  (:Resource:ontolex__LexicalConcept:li__NounType)-[wn__holo_substanceType]->(:Resource:ontolex__LexicalConcept:li__NounType),
+  (:Resource:li__Verb:ontolex__LexicalConceptType)-[wn__hypernymType]->(:Resource:li__Verb:ontolex__LexicalConceptType),
+  (:Resource:ontolex__LexicalConcept:li__NounType)-[wn__is_exemplified_byType]->(:Resource:ontolex__LexicalConcept:li__AdverbType),
+  (:Resource:li__Verb:ontolex__LexicalConceptType)-[wn__similarType]->(:Resource:li__Verb:ontolex__LexicalConceptType),
+
+  // Constraints
+  FOR (x:Resource:ontolex__LexicalEntry:li__AdverbType|Resource:ontolex__LexicalEntry:li__VerbType|Resource:ontolex__LexicalEntry:li__NounType|Resource:ontolex__LexicalEntry:li__AdjectiveSatelliteType|Resource:ontolex__LexicalEntry:li__AdjectiveType) SINGLETON y WITHIN (x)-[y: ontolex__canonicalformType]->(:Resource:ontolex__FormType)
+  FOR (x:Resource:ontolex__LexicalSenseType) SINGLETON x WITHIN (:Resource:ontolex__LexicalEntry:li__AdverbType|Resource:ontolex__LexicalEntry:li__AdjectiveType|Resource:ontolex__LexicalEntry:li__NounType)-[y: ontolex__senseType]->(x)
+}
