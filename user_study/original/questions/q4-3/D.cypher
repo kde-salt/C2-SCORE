@@ -1,0 +1,23 @@
+// --------- Nodes ------------
+CREATE (cust:Customer {customer_id:'mandatory', name:'mandatory', email:'mandatory', phone:'optional?'})
+CREATE (co:Company   {})
+CREATE (pe:Person    {})
+CREATE (o:Order      {order_id:'mandatory',    order_date:'mandatory', status:'mandatory'})
+CREATE (p:Product    {product_id:'mandatory',  name:'mandatory', price:'mandatory', description:'optional?'})
+CREATE (s:Supplier   {supplier_id:'mandatory', name:'mandatory', rating:'mandatory'})
+CREATE (c:Category   {category_id:'mandatory', name:'mandatory'})
+CREATE (r:Region     {region_id:'mandatory',   name:'mandatory'})
+
+// ---------- Relationships -------------
+MERGE (co)-[:EXTENDS]->(cust)
+MERGE (pe)-[:EXTENDS]->(cust)
+MERGE (o)-[:PLACES_ORDER {channel:'optional?'}]->(cust)    // Regression 1: reversed direction (should be Customer->Order)
+MERGE (o)-[:HAS_LINE_ITEM {quantity:'mandatory'}]->(p)
+MERGE (p)-[:BELONGS_TO]->(c)
+MERGE (c)-[:IS_PART_OF]->(c)
+MERGE (s)-[:SUPPLIES]->(c)                     // Regression 2: wrong connection (should be Supplier->Product)
+MERGE (p)-[:MADE_IN]->(r)
+MERGE (s)-[:PARTNERS_WITH]->(s)
+MERGE (p)-[:FREQUENTLY_BOUGHT_WITH]->(p)
+MERGE (co)-[:LOCATED_IN]->(r)
+MERGE (pe)-[:LIVES_IN]->(r)

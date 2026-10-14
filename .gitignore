@@ -1,0 +1,75 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+*/data/*
+
+*.json
+.DS_Store
+*.csv
+*.pkl
+
+**/__pycache__/
+tempCodeRunnerFile.py
+.mypy_cache/
+.vscode/
+**/error.log
+schema_extraction/logs/
+.claude/
+edbt_dumps/
+
+# Local Docker configuration (.env.example is tracked)
+.env
+
+# Scala / sbt
+target/
+.bsp/
+.bloop/
+.metals/
+project/project/
+project/target/
+
+# Python venv
+.venv/
+
+# PG-HIVE overwrites these at its project root every run (archived to results/<db>.txt)
+schema_extraction/pg_hive/schemadiscovery/pg_schema_output_*.txt
+schema_extraction/pg_hive/schemadiscovery/schema_output.xsd
+
+# Experiment run logs and scratch outputs
+*.log
+*.jsonl
+*.bak
+
+# User study raw responses are never published (contain personal information)
+user_study/followup/results/
+user_study/original/results/

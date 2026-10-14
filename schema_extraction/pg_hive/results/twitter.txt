@@ -1,0 +1,30 @@
+-- NODE TYPES --
+CREATE NODE TYPE UserType : User {name STRING, screen_name STRING, OPTIONAL profile_image_url STRING, OPTIONAL followers INTEGER, OPTIONAL statuses INTEGER, OPTIONAL location STRING, OPTIONAL url STRING, OPTIONAL following INTEGER};
+CREATE NODE TYPE Hashtag_SourceType : Hashtag | Source {name STRING};
+CREATE NODE TYPE User_User:MeType : User | User:Me {profile_image_url STRING, followers INTEGER, name STRING, screen_name STRING, location STRING, url STRING, following INTEGER};
+CREATE NODE TYPE LinkType : Link {url STRING};
+CREATE NODE TYPE TweetType : Tweet {favorites INTEGER, id DOUBLE, id_str DOUBLE, import_method STRING, text STRING, created_at DATE};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE contains_tagsType : CONTAINS | TAGS;
+CREATE EDGE TYPE followsType : FOLLOWS;
+CREATE EDGE TYPE follows_retweetsType : FOLLOWS | RETWEETS;
+CREATE EDGE TYPE mentionsType : MENTIONS;
+CREATE EDGE TYPE mentions_usingType : MENTIONS | USING;
+CREATE EDGE TYPE posts_reply_toType : POSTS | REPLY_TO;
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (UserType),
+  (Hashtag_SourceType),
+  (User_User:MeType),
+  (LinkType),
+  (TweetType),
+  (:TweetType)-[contains_tagsType]->(:LinkType|HashtagType),
+  (:UserType)-[followsType]->(:User:MeType),
+  (:User:MeType|TweetType)-[follows_retweetsType]->(:UserType|TweetType),
+  (:TweetType)-[mentionsType]->(:UserType),
+  (:TweetType)-[mentions_usingType]->(:User:MeType|SourceType),
+  (:UserType|User:MeType|TweetType)-[posts_reply_toType]->(:TweetType),
+
+  // Constraints
+}

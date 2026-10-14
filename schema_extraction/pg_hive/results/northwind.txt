@@ -1,0 +1,25 @@
+-- NODE TYPES --
+CREATE NODE TYPE CustomerType : Customer {address STRING, companyName STRING, contactName STRING, contactTitle STRING, postalCode STRING, country STRING, fax STRING, city STRING, region STRING, phone STRING, customerID STRING};
+CREATE NODE TYPE CategoryType : Category {categoryID INTEGER, picture DATE, categoryName STRING, description STRING};
+CREATE NODE TYPE ProductType : Product {unitPrice DOUBLE, supplierID INTEGER, categoryID INTEGER, unitsOnOrder INTEGER, quantityPerUnit DATE, discontinued BOOLEAN, unitsInStock INTEGER, productName STRING, productID INTEGER, reorderLevel INTEGER};
+CREATE NODE TYPE SupplierType : Supplier {supplierID INTEGER, address STRING, companyName STRING, contactName STRING, contactTitle STRING, postalCode STRING, homePage STRING, country STRING, fax STRING, city STRING, region STRING, phone STRING};
+CREATE NODE TYPE OrderType : Order {shipName STRING, shippedDate STRING, employeeID INTEGER, requiredDate DATE, shipCity STRING, orderID INTEGER, shipVia INTEGER, freight DOUBLE, orderDate DATE, shipPostalCode STRING, shipRegion STRING, shipCountry STRING, shipAddress STRING, customerID STRING};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE ordersType : ORDERS {unitPrice DOUBLE, orderID INTEGER, productID INTEGER, discount DOUBLE, quantity INTEGER};
+CREATE EDGE TYPE part_ofType : PART_OF;
+CREATE EDGE TYPE purchased_suppliesType : PURCHASED | SUPPLIES;
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (CustomerType),
+  (CategoryType),
+  (ProductType),
+  (SupplierType),
+  (OrderType),
+  (:OrderType)-[ordersType]->(:ProductType),
+  (:ProductType)-[part_ofType]->(:CategoryType),
+  (:CustomerType|SupplierType)-[purchased_suppliesType]->(:ProductType|OrderType),
+
+  // Constraints
+  FOR (x:ProductType) SINGLETON y WITHIN (x)-[y: part_ofType]->(:CategoryType)
+}

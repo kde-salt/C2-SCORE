@@ -1,0 +1,11 @@
+// S_Uni-1 original graph (University scenario, Schrott et al. "Graph-Native Normalization")
+// Source: https://raw.githubusercontent.com/dmki-tuwien/lpg-normalization/edbt-2027/graphs/lecture.cypher
+// Retrieved: 2026-08-10 (verbatim copy; comments added here only)
+// Redundancy: usingBook = "Alice" is duplicated on all 3 TEACHES edges (paper Fig. 1(a))
+CREATE (d:Course {title: "Database Systems", language: "English"})
+CREATE (k:Lecturer {name: "Katja"})
+CREATE (j:Lecturer {name: "Johannes"})
+CREATE (m:Lecturer {name: "Maxime"})
+CREATE (k)-[:TEACHES {at: "2026-02-23", usingBook: "Alice"}]->(d)
+CREATE (j)-[:TEACHES {at: "2026-02-09", usingBook: "Alice"}]->(d)
+CREATE (m)-[:TEACHES {at: "2026-02-16", usingBook: "Alice"}]->(d)

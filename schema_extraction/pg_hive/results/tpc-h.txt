@@ -1,0 +1,36 @@
+-- NODE TYPES --
+CREATE NODE TYPE OrderType : Order {comment STRING, shipPriority INTEGER, totalPrice DOUBLE, clerk STRING, orderDate DATE, orderStatus STRING, orderPriority DATE};
+CREATE NODE TYPE SupplierType : Supplier {comment STRING, address STRING, name STRING, acctBal DOUBLE, phone DATE};
+CREATE NODE TYPE CustomerType : Customer {comment STRING, address STRING, mktSegment STRING, name STRING, acctBal DOUBLE, phone DATE};
+CREATE NODE TYPE Nation_RegionType : Nation | Region {comment STRING, name STRING};
+CREATE NODE TYPE PartType : Part {comment STRING, type STRING, name STRING, container STRING, size INTEGER, brand STRING, retailPrice DOUBLE, mfgr STRING};
+CREATE NODE TYPE LineItemType : LineItem {comment STRING, extendedPrice DOUBLE, returnFlag STRING, lineStatus STRING, shipMode STRING, shipInstruct STRING, shipDate DATE, tax DOUBLE, receiptDate DATE, discount DOUBLE, lineNumber INTEGER, commitDate DATE, quantity INTEGER};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE belongs_to_has_orderType : BELONGS_TO | HAS_ORDER;
+CREATE EDGE TYPE lives_inType : LIVES_IN;
+CREATE EDGE TYPE located_inType : LOCATED_IN;
+CREATE EDGE TYPE of_partType : OF_PART;
+CREATE EDGE TYPE supplied_byType : SUPPLIED_BY;
+CREATE EDGE TYPE suppliesType : SUPPLIES {comment STRING, supplyCost DOUBLE, availQty INTEGER};
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (OrderType),
+  (SupplierType),
+  (CustomerType),
+  (Nation_RegionType),
+  (PartType),
+  (LineItemType),
+  (:CustomerType|LineItemType)-[belongs_to_has_orderType]->(:OrderType),
+  (:CustomerType)-[lives_inType]->(:NationType),
+  (:NationType|SupplierType)-[located_inType]->(:NationType|RegionType),
+  (:LineItemType)-[of_partType]->(:PartType),
+  (:LineItemType)-[supplied_byType]->(:SupplierType),
+  (:SupplierType)-[suppliesType]->(:PartType),
+
+  // Constraints
+  FOR (x:CustomerType) SINGLETON y WITHIN (x)-[y: lives_inType]->(:NationType)
+  FOR (x:NationType|SupplierType) SINGLETON y WITHIN (x)-[y: located_inType]->(:NationType|RegionType)
+  FOR (x:LineItemType) SINGLETON y WITHIN (x)-[y: of_partType]->(:PartType)
+  FOR (x:LineItemType) SINGLETON y WITHIN (x)-[y: supplied_byType]->(:SupplierType)
+}

@@ -1,0 +1,44 @@
+-- NODE TYPES --
+CREATE NODE TYPE GPEType : GPE {name STRING, id INTEGER};
+CREATE NODE TYPE ORG/GOV_PRODUCTType : ORG/GOV | PRODUCT {name STRING, id INTEGER};
+CREATE NODE TYPE ECON_INDICATOR_EVENTType : ECON_INDICATOR | EVENT {name STRING, id INTEGER};
+CREATE NODE TYPE ORG/REGType : ORG/REG {name STRING, id INTEGER};
+CREATE NODE TYPE CONCEPTType : CONCEPT {name STRING, id INTEGER};
+CREATE NODE TYPE PERSONType : PERSON {name STRING, id INTEGER};
+CREATE NODE TYPE FIN_INSTRUMENTType : FIN_INSTRUMENT {name STRING, id INTEGER};
+CREATE NODE TYPE SECTORType : SECTOR {name STRING, id INTEGER};
+CREATE NODE TYPE COMPType : COMP {name STRING, id INTEGER};
+CREATE NODE TYPE ORGType : ORG {name STRING, id INTEGER};
+
+-- EDGE TYPES --
+CREATE EDGE TYPE announceType : ANNOUNCE {date DATE};
+CREATE EDGE TYPE announce_control_decrease_has_impact_introduce_invests_in_is_member_of_negative_impact_on_operate_in_participates_in_positive_impact_on_produce_raise_relate_toType : ANNOUNCE | CONTROL | DECREASE | HAS | IMPACT | INTRODUCE | INVESTS_IN | IS_MEMBER_OF | NEGATIVE_IMPACT_ON | OPERATE_IN | PARTICIPATES_IN | POSITIVE_IMPACT_ON | PRODUCE | RAISE | RELATE_TO {date DATE};
+CREATE EDGE TYPE announce_control_decrease_has_impact_introduce_invests_in_is_member_of_negative_impact_on_operate_in_positive_impact_on_produce_raise_relate_toType : ANNOUNCE | CONTROL | DECREASE | HAS | IMPACT | INTRODUCE | INVESTS_IN | IS_MEMBER_OF | NEGATIVE_IMPACT_ON | OPERATE_IN | POSITIVE_IMPACT_ON | PRODUCE | RAISE | RELATE_TO {date DATE};
+CREATE EDGE TYPE announce_control_decrease_has_invests_in_is_member_of_operate_in_relate_toType : ANNOUNCE | CONTROL | DECREASE | HAS | INVESTS_IN | IS_MEMBER_OF | OPERATE_IN | RELATE_TO {date DATE};
+CREATE EDGE TYPE announce_control_decrease_has_negative_impact_on_positive_impact_onType : ANNOUNCE | CONTROL | DECREASE | HAS | NEGATIVE_IMPACT_ON | POSITIVE_IMPACT_ON {date DATE};
+CREATE EDGE TYPE has_negative_impact_on_relate_toType : HAS | NEGATIVE_IMPACT_ON | RELATE_TO {date DATE};
+CREATE EDGE TYPE invests_in_participates_in_positive_impact_on_raiseType : INVESTS_IN | PARTICIPATES_IN | POSITIVE_IMPACT_ON | RAISE {date DATE};
+CREATE EDGE TYPE relate_toType : RELATE_TO {date DATE};
+
+CREATE GRAPH TYPE NewGraphSchema STRICT {
+  (GPEType),
+  (ORG/GOV_PRODUCTType),
+  (ECON_INDICATOR_EVENTType),
+  (ORG/REGType),
+  (CONCEPTType),
+  (PERSONType),
+  (FIN_INSTRUMENTType),
+  (SECTORType),
+  (COMPType),
+  (ORGType),
+  (:COMPType)-[announceType]->(:ECON_INDICATORType|SECTORType),
+  (:PRODUCTType|ORGType|PERSONType|ORG/REGType|CONCEPTType|ORG/GOVType|GPEType|COMPType|FIN_INSTRUMENTType|ECON_INDICATORType|EVENTType|SECTORType)-[announce_control_decrease_has_impact_introduce_invests_in_is_member_of_negative_impact_on_operate_in_participates_in_positive_impact_on_produce_raise_relate_toType]->(:PRODUCTType|ORGType|ORG/GOVType|CONCEPTType|PERSONType|ORG/REGType|GPEType|COMPType|FIN_INSTRUMENTType|ECON_INDICATORType|SECTORType|EVENTType),
+  (:PRODUCTType|ORGType|PERSONType|ORG/GOVType|ORG/REGType|COMPType|FIN_INSTRUMENTType|EVENTType)-[announce_control_decrease_has_impact_introduce_invests_in_is_member_of_negative_impact_on_operate_in_positive_impact_on_produce_raise_relate_toType]->(:PRODUCTType|ORGType|PERSONType|CONCEPTType|ORG/REGType|ORG/GOVType|GPEType|COMPType|FIN_INSTRUMENTType|ECON_INDICATORType|EVENTType|SECTORType),
+  (:ORGType|CONCEPTType|GPEType|COMPType|FIN_INSTRUMENTType|EVENTType)-[announce_control_decrease_has_invests_in_is_member_of_operate_in_relate_toType]->(:PRODUCTType|ORG/GOVType|PERSONType|CONCEPTType|FIN_INSTRUMENTType|ECON_INDICATORType|SECTORType|EVENTType),
+  (:ORG/GOVType|PERSONType)-[announce_control_decrease_has_negative_impact_on_positive_impact_onType]->(:ORG/GOVType|ECON_INDICATORType|SECTORType),
+  (:ORG/GOVType|ORG/REGType|ECON_INDICATORType)-[has_negative_impact_on_relate_toType]->(:ORG/GOVType),
+  (:ORG/GOVType|SECTORType)-[invests_in_participates_in_positive_impact_on_raiseType]->(:CONCEPTType),
+  (:COMPType)-[relate_toType]->(:ORG/REGType),
+
+  // Constraints
+}
